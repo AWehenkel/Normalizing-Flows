@@ -1,5 +1,5 @@
 # Normalizing-Flows
-This repository offers an implementation of some of the most common architectures for normalizing flows.
+This repository offers an implementation of some of the most common architectures for normalizing flows. If you are here you may be interested by this nice repository https://github.com/bayesiains/nflows which contains many flow components implementation as well!
 
 ---
 ## Dependencies
