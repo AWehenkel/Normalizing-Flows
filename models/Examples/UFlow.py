@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from .Normalizers import Normalizer
+from ..Normalizers import Normalizer
 from models.Step.NormalizingFlow import NormalizingFlow, FCNormalizingFlow
 
 

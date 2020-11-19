@@ -145,6 +145,11 @@ class FCNormalizingFlow(NormalizingFlow):
         log_p_x = jac + self.z_log_density(z)
         return self.constraintsLoss() - log_p_x.mean()
 
+    def compute_ll(self, x, context=None):
+        z, jac_tot = self(x, context)
+        log_p_x = jac_tot + self.z_log_density(z)
+        return log_p_x, z
+
     def getNormalizers(self):
         normalizers = []
         for step in self.steps:
@@ -164,6 +169,8 @@ class FCNormalizingFlow(NormalizingFlow):
         return True
 
     def invert(self, z, context=None):
+        if type(z) is list:
+            z = self.z_log_density.sample(z)
         inv_idx = torch.arange(z.shape[1] - 1, -1, -1).long()
         for step in range(len(self.steps)):
             x = self.steps[-step - 1].invert(z, context)

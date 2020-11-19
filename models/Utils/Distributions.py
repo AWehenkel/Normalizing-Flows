@@ -11,6 +11,9 @@ class FlowDensity(nn.Module):
     def forward(self, z):
         pass
 
+    def sample(self, shape):
+        pass
+
 
 class NormalLogDensity(nn.Module):
     def __init__(self):
@@ -19,6 +22,9 @@ class NormalLogDensity(nn.Module):
 
     def forward(self, z):
         return torch.distributions.Normal(loc=0., scale=1.).log_prob(z).sum(1)
+
+    def sample(self, shape):
+        return torch.randn(shape)
 
 
 class MixtureLogDensity(nn.Module):

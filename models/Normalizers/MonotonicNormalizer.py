@@ -15,7 +15,7 @@ class ELUPlus(nn.Module):
         self.elu = nn.ELU()
 
     def forward(self, x):
-        return self.elu(x) + 1.05
+        return self.elu(x) + 1.
 
 
 class IntegrandNet(nn.Module):
@@ -64,8 +64,23 @@ class MonotonicNormalizer(Normalizer):
             return None
         return z, self.integrand_net(x, h)
 
-    # TODO: Implement analytic inversion + make a clean github repo for this library + pip install.
-    def inverse_transform(self, z, h, context=None):
+    def inverse_transform(self, z, h, context=None, fast=False):
+        if fast:
+            z0 = torch.zeros(z.shape).to(z.device)
+            zT = z - h[:, :, 0]
+            h = h.permute(0, 2, 1).contiguous().view(z.shape[0], -1)
+            print('ici', h)
+            if self.solver == "CC":
+                x_inv = NeuralIntegral.apply(z0, zT, self.integrand_net,
+                                                     _flatten(self.integrand_net.parameters()),
+                                                     h, self.nb_steps, True)
+            elif self.solver == "CCParallel":
+                x_inv = ParallelNeuralIntegral.apply(z0, zT, self.integrand_net,
+                                                             _flatten(self.integrand_net.parameters()),
+                                                             h, self.nb_steps, True)
+            return x_inv
+
+        # Old inversion by binary search
         x_max = torch.ones_like(z) * 20
         x_min = -torch.ones_like(z) * 20
         z_max, _ = self.forward(x_max, h, context)
@@ -80,3 +95,5 @@ class MonotonicNormalizer(Normalizer):
             z_max = left * z_middle + right * z_max
             z_min = right * z_middle + left * z_min
         return (x_max + x_min) / 2
+
+
