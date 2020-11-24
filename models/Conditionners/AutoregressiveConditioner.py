@@ -44,7 +44,7 @@ class MAN(nn.Module):
         self.nin = nin
         self.nout = nout
         self.hidden_sizes = hidden_sizes
-        assert self.nout % self.nin == 0, "nout must be integer multiple of nin"
+        #assert self.nout % self.nin == 0, "nout must be integer multiple of nin"
 
         # define a simple MLP neural net
         self.net = []
@@ -145,7 +145,7 @@ class AutoregressiveConditioner(Conditioner):
     def __init__(self, in_size, hidden, out_size, cond_in=0):
         super(AutoregressiveConditioner, self).__init__()
         self.in_size = in_size
-        self.masked_autoregressive_net = ConditionnalMAN(in_size, cond_in=cond_in, hidden_sizes=hidden, nout=out_size*in_size)
+        self.masked_autoregressive_net = ConditionnalMAN(in_size, cond_in=cond_in, hidden_sizes=hidden, nout=out_size*(in_size + cond_in))
         self.register_buffer("A", 1 - torch.tril(torch.ones(in_size, in_size)).T)
 
     def forward(self, x, context=None):
