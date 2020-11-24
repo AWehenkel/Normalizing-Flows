@@ -142,12 +142,23 @@ class ConditionnalMAN(MAN):
 
 
 class AutoregressiveConditioner(Conditioner):
+    """
+    in_size: The dimension of the input vector, this corresponds to the number of autoregressive output vectors.
+    hidden: The dimension of the masked autoregressive neural network hidden layers.
+    out_size: The dimension of the output vectors.
+    cond_in: The dimension of the additional context input.
+    """
     def __init__(self, in_size, hidden, out_size, cond_in=0):
         super(AutoregressiveConditioner, self).__init__()
         self.in_size = in_size
         self.masked_autoregressive_net = ConditionnalMAN(in_size, cond_in=cond_in, hidden_sizes=hidden, nout=out_size*(in_size + cond_in))
         self.register_buffer("A", 1 - torch.tril(torch.ones(in_size, in_size)).T)
 
+    """
+    x: An input tensor with dim=[b_size, in_size]
+    context: A context/conditionning tensor with dim=[b_size, cond_in]
+    return: An autoregressive embedding tensor of x conditionned on context, its dim is=[b_size, in_size, out_size]
+    """
     def forward(self, x, context=None):
         return self.masked_autoregressive_net(x, context)
 
