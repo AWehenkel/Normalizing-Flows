@@ -2,6 +2,9 @@
 This repository offers an implementation of some of the most common architectures for normalizing flows. If you are here you may be interested by this nice repository https://github.com/bayesiains/nflows which contains many flow components implementation as well!
 
 ---
+## Installation:
+`pip install git+https://github.com/AWehenkel/Normalizing-Flows/
+
 ## Dependencies
 
 - torch (> 1.5)
