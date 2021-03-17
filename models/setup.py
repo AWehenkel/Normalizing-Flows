@@ -1,0 +1,19 @@
+from setuptools import setup
+import setuptools
+
+setup(
+    name='NormalizingFlows',
+    version='0.1',
+    author="Antoine Wehenkel",
+    author_email="antoine.wehenkel@gmail.com",
+    description="Implementation of affine and monotonic normalizing flows - autoregressive/coupling/graphical conditioners",
+    long_description='',
+    long_description_content_type="text/markdown",
+    url="https://github.com/awehenkel/Normalizing-Flows",
+    packages=setuptools.find_packages(),
+    classifiers=[
+     "Programming Language :: Python :: 3",
+     "License :: OSI Approved :: MIT License",
+     "Operating System :: OS Independent",
+     ],
+)
