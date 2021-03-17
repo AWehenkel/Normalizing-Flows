@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 from ..Normalizers import *
 from ..Conditionners import *
-from models.Step.NormalizingFlow import NormalizingFlowStep, FCNormalizingFlow, CNNormalizingFlow
-from models.Utils.MLP import MNISTCNN, CIFAR10CNN, MLP
-from models.Examples.UFlow import UFlow, ImprovedUFlow
+from ..Step.NormalizingFlow import NormalizingFlowStep, FCNormalizingFlow, CNNormalizingFlow
+from .MLP import MNISTCNN, CIFAR10CNN, MLP
+from ..Examples.UFlow import UFlow, ImprovedUFlow
 from .Distributions import *
 
 def buildFCNormalizingFlow(nb_steps, conditioner_type, conditioner_args, normalizer_type, normalizer_args):

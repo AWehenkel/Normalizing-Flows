@@ -2,7 +2,7 @@ from setuptools import setup
 import setuptools
 
 setup(
-    name='NormalizingFlows',
+    name='normalizingflows',
     version='0.1',
     author="Antoine Wehenkel",
     author_email="antoine.wehenkel@gmail.com",
@@ -10,6 +10,7 @@ setup(
     long_description='',
     long_description_content_type="text/markdown",
     url="https://github.com/awehenkel/Normalizing-Flows",
+    install_requires=['umnn', 'torch', 'networkx'],
     packages=setuptools.find_packages(),
     classifiers=[
      "Programming Language :: Python :: 3",

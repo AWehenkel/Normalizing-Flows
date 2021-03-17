@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from models.Conditionners import Conditioner, DAGConditioner
-from models.Normalizers import Normalizer
-from models.Utils.Distributions import FlowDensity
+from ..Conditionners import Conditioner, DAGConditioner
+from ..Normalizers import Normalizer
+from ..Utils.Distributions import FlowDensity
 
 
 class NormalizingFlow(nn.Module):

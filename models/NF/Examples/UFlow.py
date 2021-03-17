@@ -1,7 +1,5 @@
 import torch
-import torch.nn as nn
-from ..Normalizers import Normalizer
-from models.Step.NormalizingFlow import NormalizingFlow, FCNormalizingFlow
+from ..Step.NormalizingFlow import FCNormalizingFlow
 
 
 class UFlow(FCNormalizingFlow):

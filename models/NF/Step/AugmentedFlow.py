@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
-from models.Conditionners import AutoregressiveConditioner
-from models.Normalizers import AffineNormalizer
-from models.Step import FCNormalizingFlow, NormalizingFlowStep
-from models.Utils.Distributions import NormalLogDensity
+from ..Conditionners import AutoregressiveConditioner
+from ..Normalizers import AffineNormalizer
+from ..Step import FCNormalizingFlow, NormalizingFlowStep
+from ..Utils.Distributions import NormalLogDensity
 
 
 # Todo defined as an augmented flow step which can be composed with other flow or augmented flow into a simple flow.
