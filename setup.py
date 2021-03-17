@@ -11,7 +11,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/awehenkel/Normalizing-Flows",
     install_requires=['umnn', 'torch', 'networkx'],
-    packages=setuptools.find_packages('.NF'),
+    packages=setuptools.find_packages(),
     classifiers=[
      "Programming Language :: Python :: 3",
      "License :: OSI Approved :: MIT License",
