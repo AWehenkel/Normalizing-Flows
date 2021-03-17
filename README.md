@@ -3,7 +3,7 @@ This repository offers an implementation of some of the most common architecture
 
 ---
 ## Installation:
-`pip install git+https://github.com/AWehenkel/Normalizing-Flows/
+`pip install git+https://github.com/AWehenkel/Normalizing-Flows/`
 
 ## Dependencies
 
