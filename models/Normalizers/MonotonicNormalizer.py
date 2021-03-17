@@ -64,22 +64,7 @@ class MonotonicNormalizer(Normalizer):
             return None
         return z, self.integrand_net(x, h)
 
-    def inverse_transform(self, z, h, context=None, fast=False):
-        if fast:
-            z0 = torch.zeros(z.shape).to(z.device)
-            zT = z - h[:, :, 0]
-            h = h.permute(0, 2, 1).contiguous().view(z.shape[0], -1)
-            print('ici', h)
-            if self.solver == "CC":
-                x_inv = NeuralIntegral.apply(z0, zT, self.integrand_net,
-                                                     _flatten(self.integrand_net.parameters()),
-                                                     h, self.nb_steps, True)
-            elif self.solver == "CCParallel":
-                x_inv = ParallelNeuralIntegral.apply(z0, zT, self.integrand_net,
-                                                             _flatten(self.integrand_net.parameters()),
-                                                             h, self.nb_steps, True)
-            return x_inv
-
+    def inverse_transform(self, z, h, context=None):
         # Old inversion by binary search
         x_max = torch.ones_like(z) * 20
         x_min = -torch.ones_like(z) * 20
