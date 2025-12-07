@@ -117,20 +117,22 @@ class ConditionnalMAN(MAN):
         self.cond_in = cond_in
 
     def forward(self, x, context):
-        """JIT-compatible context handling"""
-        if context is not None:
+        """JIT-compatible context handling - context cannot be None for JIT"""
+        if self.cond_in > 0:
+            # Always expect context when cond_in > 0
             combined_input = torch.cat((context, x), 1)
         else:
-            # Pad with zeros when context is None
-            batch_size = x.shape[0]
-            zero_context = torch.zeros(batch_size, self.cond_in, device=x.device, dtype=x.dtype)
-            combined_input = torch.cat((zero_context, x), 1)
+            # No context expected - just use input
+            combined_input = x
 
         # Forward through MAN directly (not via super() for JIT compatibility)
         out = self.net(combined_input).view(combined_input.shape[0], -1, combined_input.shape[1]).permute(0, 2, 1)
 
         # Extract non-conditional outputs (same as original)
-        return out.contiguous()[:, self.cond_in:, :]
+        if self.cond_in > 0:
+            return out.contiguous()[:, self.cond_in:, :]
+        else:
+            return out.contiguous()
 
 
 class AutoregressiveConditioner(Conditioner):
