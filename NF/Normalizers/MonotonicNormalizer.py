@@ -1,5 +1,8 @@
 import torch
 from UMNN import NeuralIntegral, ParallelNeuralIntegral
+# Import the integrate functions for JIT compatibility
+from UMNN.NeuralIntegral import integrate as sequential_integrate
+from UMNN.ParallelNeuralIntegral import integrate as parallel_integrate
 from .Normalizer import Normalizer
 import torch.nn as nn
 
@@ -53,15 +56,49 @@ class MonotonicNormalizer(Normalizer):
         xT = x
         z0 = h[:, :, 0]
         h = h.permute(0, 2, 1).contiguous().view(x.shape[0], -1)
-        if self.solver == "CC":
-            z = NeuralIntegral.apply(x0, xT, self.integrand_net, _flatten(self.integrand_net.parameters()),
-                                     h, self.nb_steps) + z0
-        elif self.solver == "CCParallel":
-            z = ParallelNeuralIntegral.apply(x0, xT, self.integrand_net,
-                                             _flatten(self.integrand_net.parameters()),
-                                             h, self.nb_steps) + z0
-        else:
-            return None
+
+        # Detect if we're in JIT compilation/tracing mode or if gradients are not needed
+        is_jit_mode = torch.jit.is_tracing() or torch.jit.is_scripting()
+        is_inference_mode = (not self.training) and (not x.requires_grad)
+        use_direct_integration = is_jit_mode or is_inference_mode
+
+        try:
+            if use_direct_integration:
+                # Use direct integration (JIT-compatible, no custom backward)
+                if self.solver == "CC":
+                    z = sequential_integrate(x0, self.nb_steps, (xT - x0)/self.nb_steps,
+                                           self.integrand_net, h, False) + z0
+                elif self.solver == "CCParallel":
+                    z = parallel_integrate(x0, self.nb_steps, (xT - x0)/self.nb_steps,
+                                         self.integrand_net, h, False, None, False) + z0
+                else:
+                    return None
+            else:
+                # Use autograd.Function for training (has custom backward)
+                if self.solver == "CC":
+                    z = NeuralIntegral.apply(x0, xT, self.integrand_net,
+                                           _flatten(self.integrand_net.parameters()),
+                                           h, self.nb_steps) + z0
+                elif self.solver == "CCParallel":
+                    z = ParallelNeuralIntegral.apply(x0, xT, self.integrand_net,
+                                                   _flatten(self.integrand_net.parameters()),
+                                                   h, self.nb_steps) + z0
+                else:
+                    return None
+        except RuntimeError as e:
+            # If we hit a JIT error with autograd.Function, fall back to direct integration
+            if "Map_base::at" in str(e) or "TorchScript" in str(e):
+                if self.solver == "CC":
+                    z = sequential_integrate(x0, self.nb_steps, (xT - x0)/self.nb_steps,
+                                           self.integrand_net, h, False) + z0
+                elif self.solver == "CCParallel":
+                    z = parallel_integrate(x0, self.nb_steps, (xT - x0)/self.nb_steps,
+                                         self.integrand_net, h, False, None, False) + z0
+                else:
+                    return None
+            else:
+                raise
+
         return z, self.integrand_net(x, h)
 
     def inverse_transform(self, z, h, context=None):
