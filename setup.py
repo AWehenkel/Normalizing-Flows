@@ -3,7 +3,7 @@ import setuptools
 
 setup(
     name='normalizingflows',
-    version='0.2',
+    version='0.2.1',
     author="Antoine Wehenkel",
     author_email="antoine.wehenkel@gmail.com",
     description="Implementation of affine and monotonic normalizing flows - autoregressive/coupling/graphical conditioners",
